@@ -1,12 +1,12 @@
 {
   "domain": "fuel_prices_italy",
   "name": "Fuel Prices Italy",
-  "version": "0.1.0",
-  "config_flow": true,
-  "documentation": "https://github.com/nuggetz/ha-fuel-prices-ita",
-  "issue_tracker": "https://github.com/nuggetz/ha-fuel-prices-ita/issues",
   "codeowners": ["@nuggetz"],
-  "requirements": [],
+  "config_flow": true,
   "dependencies": [],
-  "iot_class": "cloud_polling"
+  "documentation": "https://github.com/nuggetz/ha-fuel-prices-ita",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/nuggetz/ha-fuel-prices-ita/issues",
+  "requirements": [],
+  "version": "0.1.0"
 }
