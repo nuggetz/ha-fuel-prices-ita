@@ -1,154 +1,295 @@
-<img src="assets/header.png" alt="ha-fuel-prices" width="100%"/>
+# Fuel Prices Italy
 
-A Home Assistant custom component that exposes sensors with **fuel prices across Italy**, powered by the open data published daily by the Italian Ministry of Enterprises and Made in Italy (MIMIT). Public data, updated every morning, no authentication required.
+![ha-fuel-prices](assets/header.png)
+
+Monitor real-time Italian fuel prices in Home Assistant using official open data from the Ministry of Enterprises and Made in Italy (MIMIT). Zero authentication, zero cost.
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![License: MIT](https://img.shields.io/github/license/nuggetz/ha-fuel-prices-ita)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/nuggetz/ha-fuel-prices-ita?display_name=tag)](https://github.com/nuggetz/ha-fuel-prices-ita/releases)
+[![Issues](https://img.shields.io/github/issues/nuggetz/ha-fuel-prices-ita)](https://github.com/nuggetz/ha-fuel-prices-ita/issues)
+[![Last commit](https://img.shields.io/github/last-commit/nuggetz/ha-fuel-prices-ita)](https://github.com/nuggetz/ha-fuel-prices-ita/commits/main)
 
 ---
 
-## Features
+## What it does
 
-- Asynchronously downloads MIMIT CSV files (prices + station registry)
-- Filters stations within a configurable radius from your HA home location
-- Exposes **minimum, average, and maximum** price sensors per fuel type
-- **Self-service** and **full-service** modes handled separately
-- Automatic refresh every 6 hours (configurable: 1 / 3 / 6 / 12 h)
-- Zero external Python dependencies — only libraries already bundled with HA
+| Feature | Detail |
+| --- | --- |
+| Data source | MIMIT open data CSV (daily update at 08:00 IT) |
+| API key required | No |
+| Geo filtering | Stations within a configurable radius from your HA home location |
+| Fuel types | Gasoline, Diesel, LPG, Methane (CNG), HVO, Blue Diesel |
+| Modes | Self-service and full service (servito) separately |
+| Statistics | Minimum, average, maximum price per fuel type / mode |
+| Update interval | Configurable: 1 / 3 / 6 / 12 h (default 6 h) |
+| HA minimum | 2024.1 |
+| Python minimum | 3.12 |
 
-## Supported fuel types
-
-| Fuel | Unit | Enabled by default |
-| --- | --- | --- |
-| Gasoline (Benzina) | EUR/L | ✅ |
-| Diesel (Gasolio) | EUR/L | ✅ |
-| LPG (GPL) | EUR/L | — |
-| Methane / CNG (Metano) | EUR/kg | — |
-| HVO / Biodiesel | EUR/L | — |
-| Blue Diesel | EUR/L | — |
+---
 
 ## Installation
 
 ### HACS (recommended)
 
-1. Open HACS → **Integrations** → top-right menu → **Custom repositories**
-2. Add `https://github.com/nuggetz/ha-fuel-prices-ita` as type **Integration**
-3. Search for "Fuel Prices Italy" and install it
-4. Restart Home Assistant
+1. Open HACS → **Integrations**
+2. Click the three-dot menu (top right) → **Custom repositories**
+3. Add `https://github.com/nuggetz/ha-fuel-prices-ita` — category **Integration**
+4. Search for **Fuel Prices Italy** and click **Download**
+5. Restart Home Assistant
+6. Go to **Settings → Devices & Services → Add Integration**
+7. Search for **Fuel Prices Italy** and follow the setup wizard
+
+> **Reconfigure tip:** After setup, go to the integration options to change the search radius, add or remove fuel types, adjust the update interval, or toggle full-service prices.
 
 ### Manual
 
-1. Copy the `custom_components/fuel_prices_italy/` folder into your `config/custom_components/` directory
-2. Restart Home Assistant
+1. Download the latest release from the [Releases page](https://github.com/nuggetz/ha-fuel-prices-ita/releases)
+2. Copy `custom_components/fuel_prices_italy/` into your `config/custom_components/` directory
+3. Restart Home Assistant
+4. Add the integration from **Settings → Devices & Services**
 
-## Configuration
-
-1. Go to **Settings → Devices & Services → Add Integration**
-2. Search for **Fuel Prices Italy**
-3. Set the search radius (default 5 km) and the fuel types to monitor
-
-> If your HA home location is not configured, you will be asked for an Italian address or city name to find nearby stations.
+---
 
 ## Sensors
 
-Up to 6 entities are created per selected fuel type:
+The integration creates up to **6 sensors per fuel type** (min / avg / max × self-service / full-service). Only gasoline and diesel self-service min and avg are **enabled by default**; all others can be enabled individually in the entity registry.
 
-```
-sensor.fuel_gasoline_self_min       # Gasoline self-service — minimum price
-sensor.fuel_gasoline_self_avg       # Gasoline self-service — average price
-sensor.fuel_gasoline_self_max       # Gasoline self-service — maximum price
-sensor.fuel_gasoline_servito_min    # Gasoline full service — minimum price
-...
+### Entity pattern
+
+```text
+sensor.fuel_prices_italy_{fuel}_{mode}_{stat}
 ```
 
-Each sensor exposes the following extra attributes:
+Where `{fuel}` = `gasoline | diesel | lpg | methane | hvo | blue_diesel`, `{mode}` = `self_service | full_service`, `{stat}` = `min | avg | max`.
 
-| Attribute | Description |
-|-----------|-------------|
-| `stations_count` | Number of stations found within the radius |
-| `cheapest_station` | Manager / brand of the cheapest station |
-| `cheapest_station_address` | Address of the cheapest station |
-| `cheapest_station_distance_km` | Distance in km |
-| `last_updated` | Timestamp of the latest MIMIT data |
-| `radius_km` | Search radius in use |
+### Full entity list
 
-## Automation example — alert when price drops below threshold
+| Entity ID | Unit | Enabled by default | Description |
+| --- | --- | --- | --- |
+| `sensor.fuel_prices_italy_gasoline_self_service_min` | EUR/L | ✅ | Cheapest gasoline self-service in radius |
+| `sensor.fuel_prices_italy_gasoline_self_service_avg` | EUR/L | ✅ | Average gasoline self-service in radius |
+| `sensor.fuel_prices_italy_gasoline_self_service_max` | EUR/L | — | Most expensive gasoline self-service |
+| `sensor.fuel_prices_italy_gasoline_full_service_min` | EUR/L | — | Cheapest gasoline full service |
+| `sensor.fuel_prices_italy_gasoline_full_service_avg` | EUR/L | — | Average gasoline full service |
+| `sensor.fuel_prices_italy_gasoline_full_service_max` | EUR/L | — | Most expensive gasoline full service |
+| `sensor.fuel_prices_italy_diesel_self_service_min` | EUR/L | ✅ | Cheapest diesel self-service in radius |
+| `sensor.fuel_prices_italy_diesel_self_service_avg` | EUR/L | ✅ | Average diesel self-service in radius |
+| `sensor.fuel_prices_italy_diesel_self_service_max` | EUR/L | — | Most expensive diesel self-service |
+| `sensor.fuel_prices_italy_diesel_full_service_min` | EUR/L | — | Cheapest diesel full service |
+| `sensor.fuel_prices_italy_diesel_full_service_avg` | EUR/L | — | Average diesel full service |
+| `sensor.fuel_prices_italy_diesel_full_service_max` | EUR/L | — | Most expensive diesel full service |
+| `sensor.fuel_prices_italy_lpg_self_service_min` | EUR/L | — | Cheapest LPG self-service |
+| `sensor.fuel_prices_italy_lpg_self_service_avg` | EUR/L | — | Average LPG self-service |
+| `sensor.fuel_prices_italy_lpg_self_service_max` | EUR/L | — | Most expensive LPG self-service |
+| `sensor.fuel_prices_italy_lpg_full_service_min` | EUR/L | — | Cheapest LPG full service |
+| `sensor.fuel_prices_italy_lpg_full_service_avg` | EUR/L | — | Average LPG full service |
+| `sensor.fuel_prices_italy_lpg_full_service_max` | EUR/L | — | Most expensive LPG full service |
+| `sensor.fuel_prices_italy_methane_self_service_min` | EUR/kg | — | Cheapest CNG self-service |
+| `sensor.fuel_prices_italy_methane_self_service_avg` | EUR/kg | — | Average CNG self-service |
+| `sensor.fuel_prices_italy_methane_self_service_max` | EUR/kg | — | Most expensive CNG self-service |
+| `sensor.fuel_prices_italy_methane_full_service_min` | EUR/kg | — | Cheapest CNG full service |
+| `sensor.fuel_prices_italy_methane_full_service_avg` | EUR/kg | — | Average CNG full service |
+| `sensor.fuel_prices_italy_methane_full_service_max` | EUR/kg | — | Most expensive CNG full service |
+| `sensor.fuel_prices_italy_hvo_self_service_min` | EUR/L | — | Cheapest HVO/biodiesel self-service |
+| `sensor.fuel_prices_italy_hvo_self_service_avg` | EUR/L | — | Average HVO/biodiesel self-service |
+| `sensor.fuel_prices_italy_hvo_self_service_max` | EUR/L | — | Most expensive HVO/biodiesel self-service |
+| `sensor.fuel_prices_italy_hvo_full_service_min` | EUR/L | — | Cheapest HVO/biodiesel full service |
+| `sensor.fuel_prices_italy_hvo_full_service_avg` | EUR/L | — | Average HVO/biodiesel full service |
+| `sensor.fuel_prices_italy_hvo_full_service_max` | EUR/L | — | Most expensive HVO/biodiesel full service |
+| `sensor.fuel_prices_italy_blue_diesel_self_service_min` | EUR/L | — | Cheapest Blue Diesel self-service |
+| `sensor.fuel_prices_italy_blue_diesel_self_service_avg` | EUR/L | — | Average Blue Diesel self-service |
+| `sensor.fuel_prices_italy_blue_diesel_self_service_max` | EUR/L | — | Most expensive Blue Diesel self-service |
+| `sensor.fuel_prices_italy_blue_diesel_full_service_min` | EUR/L | — | Cheapest Blue Diesel full service |
+| `sensor.fuel_prices_italy_blue_diesel_full_service_avg` | EUR/L | — | Average Blue Diesel full service |
+| `sensor.fuel_prices_italy_blue_diesel_full_service_max` | EUR/L | — | Most expensive Blue Diesel full service |
+
+### Sensor attributes
+
+Every sensor exposes these extra attributes:
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `stations_count` | int | Number of stations in radius reporting this fuel type |
+| `cheapest_station` | string | Manager / brand of the cheapest station |
+| `cheapest_station_address` | string | Full address of the cheapest station |
+| `cheapest_station_distance_km` | float | Distance in km to the cheapest station |
+| `last_updated` | string | Timestamp of the MIMIT data (`dd/MM/yyyy HH:mm:ss`) |
+| `radius_km` | float | Search radius currently in use |
+
+---
+
+## Configuration
+
+### Setup options (initial wizard)
+
+| Field | Default | Range | Notes |
+| --- | --- | --- | --- |
+| Search radius | 5 km | 1 – 50 km | Slider |
+| Fuel types | Gasoline, Diesel | All types | Multi-select |
+
+> If your HA home location is not configured (latitude/longitude = 0), an extra step asks for an Italian address or city name. The address is resolved via [Nominatim / OpenStreetMap](https://nominatim.openstreetmap.org) — no API key required.
+
+### Options (reconfigure at any time)
+
+| Field | Default | Notes |
+| --- | --- | --- |
+| Search radius | 5 km | 1 – 50 km slider |
+| Fuel types | Gasoline, Diesel | Multi-select; changes take effect on next update |
+| Update interval | 6 h | 1 / 3 / 6 / 12 hours |
+| Include full-service prices | On | Toggle to hide all _full_service_ entities |
+
+---
+
+## Dashboard card examples
+
+### Markdown card — quick price overview
+
+```yaml
+type: markdown
+content: >
+  ## ⛽ Carburante vicino a te
+
+  | Tipo | Self min | Self avg |
+  |------|----------|----------|
+  | Benzina | {{ states('sensor.fuel_prices_italy_gasoline_self_service_min') }} €/L | {{ states('sensor.fuel_prices_italy_gasoline_self_service_avg') }} €/L |
+  | Gasolio | {{ states('sensor.fuel_prices_italy_diesel_self_service_min') }} €/L | {{ states('sensor.fuel_prices_italy_diesel_self_service_avg') }} €/L |
+
+  📍 Stazione più economica (benzina):
+  {{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'cheapest_station') }}
+  — {{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'cheapest_station_address') }}
+  ({{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'cheapest_station_distance_km') }} km)
+```
+
+### Entities card — all default sensors
+
+```yaml
+type: entities
+title: Fuel Prices
+entities:
+  - entity: sensor.fuel_prices_italy_gasoline_self_service_min
+    name: Gasoline min
+  - entity: sensor.fuel_prices_italy_gasoline_self_service_avg
+    name: Gasoline avg
+  - entity: sensor.fuel_prices_italy_diesel_self_service_min
+    name: Diesel min
+  - entity: sensor.fuel_prices_italy_diesel_self_service_avg
+    name: Diesel avg
+```
+
+---
+
+## Automation examples
+
+### Alert when gasoline drops below a threshold
 
 ```yaml
 automation:
-  alias: "Cheap gasoline alert"
+  alias: "Gasoline price alert"
   trigger:
     - platform: numeric_state
-      entity_id: sensor.fuel_gasoline_self_min
-      below: 1.80
+      entity_id: sensor.fuel_prices_italy_gasoline_self_service_min
+      below: 1.75
   action:
     - service: notify.mobile_app
       data:
         title: "Cheap fuel nearby!"
         message: >
-          Min price: {{ states('sensor.fuel_gasoline_self_min') }} EUR/L
-          at {{ state_attr('sensor.fuel_gasoline_self_min', 'cheapest_station') }}
-          ({{ state_attr('sensor.fuel_gasoline_self_min', 'cheapest_station_distance_km') }} km away)
+          Gasoline at {{ states('sensor.fuel_prices_italy_gasoline_self_service_min') }} EUR/L
+          at {{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'cheapest_station') }}
+          ({{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'cheapest_station_distance_km') }} km away)
 ```
+
+### Daily price report at a fixed time
+
+```yaml
+automation:
+  alias: "Daily fuel price report"
+  trigger:
+    - platform: time
+      at: "08:30:00"
+  action:
+    - service: notify.mobile_app
+      data:
+        title: "Today's fuel prices"
+        message: >
+          ⛽ Benzina self: {{ states('sensor.fuel_prices_italy_gasoline_self_service_min') }} – {{ states('sensor.fuel_prices_italy_gasoline_self_service_max') }} EUR/L
+          🛢️ Gasolio self: {{ states('sensor.fuel_prices_italy_diesel_self_service_min') }} – {{ states('sensor.fuel_prices_italy_diesel_self_service_max') }} EUR/L
+          ({{ state_attr('sensor.fuel_prices_italy_gasoline_self_service_min', 'stations_count') }} stazioni nel raggio)
+```
+
+### Notify when prices rise above a warning level
+
+```yaml
+automation:
+  alias: "Fuel price high warning"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.fuel_prices_italy_gasoline_self_service_avg
+      above: 2.00
+  action:
+    - service: notify.mobile_app
+      data:
+        title: "Fuel prices are high"
+        message: >
+          Average gasoline in your area reached
+          {{ states('sensor.fuel_prices_italy_gasoline_self_service_avg') }} EUR/L.
+```
+
+---
+
+## Automation blueprints
+
+> **Coming soon.** Importable blueprints for the most common use cases:
+>
+> - Price-drop alert (configurable fuel type, threshold, and notification target)
+> - Daily morning price digest
+> - High-price warning with cooldown
+
+---
+
+## Development status
+
+| Milestone | Description | Status |
+| --- | --- | --- |
+| v1.0.0 | Core integration: CSV download, geo filter, sensors, config flow | ✅ Done |
+| v1.0.0 | HACS compliance, CI/CD, full test suite | ✅ Done |
+| v1.1.0 | Automation blueprints | ⏳ In progress |
+| v1.1.0 | 7-day price history attribute on min sensors | 🔲 Planned |
+| v1.2.0 | Top-5 cheapest stations list as sensor attribute | 🔲 Planned |
+| v2.0.0 | Multi-location support (e.g., home + workplace) | 🔲 Planned |
+
+---
 
 ## Data source
 
-Data is sourced from the **Ministero delle Imprese e del Made in Italy (MIMIT)** open data portal, licensed under [IODL 2.0](https://www.dati.gov.it/iodl/2.0/).
+Prices are sourced from the **Ministero delle Imprese e del Made in Italy (MIMIT)** open data portal, licensed under [IODL 2.0](https://www.dati.gov.it/iodl/2.0/).
 
-- Price CSV: updated every morning at 08:00 Italian time
+- Price CSV: updated every morning at **08:00 Italian time**
 - Station registry CSV: updated when active stations change
-
-## Requirements
-
-- Home Assistant **2024.1+**
-- Python **3.12+**
-
-## License
-
-MIT
-
----
+- Coordinates in the station registry are provided voluntarily by operators and are not verified by MIMIT. Stations with missing, zero, or out-of-Italy coordinates are automatically excluded.
 
 ---
 
 ## 🇮🇹 Versione italiana
 
-### Descrizione
+Custom component per Home Assistant che espone sensori con i **prezzi del carburante in Italia** usando i dati open del MIMIT. Dati pubblici, aggiornati ogni mattina, senza autenticazione.
 
-Custom component per Home Assistant che espone sensori con i **prezzi del carburante in Italia** usando i dati open del Ministero delle Imprese e del Made in Italy (MIMIT). Dati pubblici, aggiornati ogni mattina, senza autenticazione.
+### Installazione rapida
 
-### Caratteristiche
-
-- Scarica i CSV MIMIT (prezzi + anagrafica impianti) in modo asincrono
-- Filtra le stazioni nel raggio configurato dalla posizione di casa HA
-- Espone sensori con prezzo **minimo, medio e massimo** per ogni carburante
-- Modalità **self-service** e **servito** gestite separatamente
-- Aggiornamento automatico ogni 6 ore (configurabile: 1 / 3 / 6 / 12 h)
-- Nessuna dipendenza Python esterna
-
-### Installazione
-
-#### HACS (consigliato)
-
-1. Apri HACS → **Integrazioni** → menu in alto a destra → **Repository personalizzati**
-2. Aggiungi `https://github.com/nuggetz/ha-fuel-prices-ita` come tipo **Integration**
-3. Cerca "Fuel Prices Italy" e installala
-4. Riavvia Home Assistant
-
-#### Manuale
-
-1. Copia la cartella `custom_components/fuel_prices_italy/` nella tua directory `config/custom_components/`
-2. Riavvia Home Assistant
+1. HACS → **Integrazioni** → menu ⋮ → **Repository personalizzati**
+2. Aggiungi `https://github.com/nuggetz/ha-fuel-prices-ita` come **Integration**
+3. Cerca **Fuel Prices Italy** e scarica
+4. Riavvia HA → Impostazioni → Dispositivi e servizi → Aggiungi integrazione
 
 ### Configurazione
 
-1. Vai in **Impostazioni → Dispositivi e servizi → Aggiungi integrazione**
-2. Cerca **Fuel Prices Italy**
-3. Configura il raggio di ricerca (default 5 km) e i tipi di carburante
-
-> Se la posizione di casa in HA non è configurata, verrà chiesto un indirizzo o città italiana.
+Imposta raggio di ricerca e tipi di carburante. Se la posizione di casa in HA non è configurata, viene chiesto un indirizzo italiano per trovare le stazioni vicine (geocoding via OpenStreetMap, nessuna API key).
 
 ### Sensori
 
-Per ogni carburante selezionato vengono create fino a 6 entità (min / media / max × self / servito). Ogni sensore include attributi extra: stazione più economica, indirizzo, distanza, numero stazioni nel raggio.
+Per ogni carburante selezionato vengono create fino a 6 entità (min / media / max × self / servito). Di default sono attivi solo benzina e gasolio self min/media. Ogni sensore espone: stazione più economica, indirizzo, distanza, numero stazioni nel raggio.
 
 ### Fonte dati
 
-Dati dal portale open data **MIMIT**, licenza [IODL 2.0](https://www.dati.gov.it/iodl/2.0/). CSV prezzi aggiornato ogni mattina alle 08:00.
+**MIMIT** open data, licenza [IODL 2.0](https://www.dati.gov.it/iodl/2.0/). CSV prezzi aggiornato ogni mattina alle 08:00.
