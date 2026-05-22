@@ -252,8 +252,8 @@ automation:
 
 | Milestone | Description | Status |
 | --- | --- | --- |
-| v1.0.0 | Core integration: CSV download, geo filter, sensors, config flow | ✅ Done |
-| v1.0.0 | HACS compliance, CI/CD, full test suite | ✅ Done |
+| v0.1.0 | Core integration: CSV download, geo filter, sensors, config flow | ✅ Done |
+| v0.1.0 | HACS compliance, CI/CD, full test suite | ✅ Done |
 | v1.1.0 | Automation blueprints | ⏳ In progress |
 | v1.1.0 | 7-day price history attribute on min sensors | 🔲 Planned |
 | v1.2.0 | Top-5 cheapest stations list as sensor attribute | 🔲 Planned |
