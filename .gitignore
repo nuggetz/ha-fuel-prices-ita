@@ -12,3 +12,6 @@ build/
 .ruff_cache/
 htmlcov/
 .coverage
+.claude/
+*.code-workspace
+/docs/
