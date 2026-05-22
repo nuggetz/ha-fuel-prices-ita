@@ -11,10 +11,9 @@ from custom_components.fuel_prices_italy.coordinator import FuelPricesCoordinato
 
 @pytest.fixture
 def coordinator(hass):
-    session = MagicMock()
     return FuelPricesCoordinator(
         hass=hass,
-        session=session,
+        session=MagicMock(),
         latitude=41.9,
         longitude=12.48,
         radius_km=10,
@@ -24,7 +23,6 @@ def coordinator(hass):
     )
 
 
-@pytest.mark.asyncio
 async def test_coordinator_first_refresh_success(coordinator, sample_prices, sample_stations):
     with (
         patch.object(coordinator._client, "fetch_prices", AsyncMock(return_value=sample_prices)),
@@ -36,7 +34,6 @@ async def test_coordinator_first_refresh_success(coordinator, sample_prices, sam
     assert ("gasoline", True) in coordinator.data
 
 
-@pytest.mark.asyncio
 async def test_coordinator_raises_update_failed_on_first_error(coordinator):
     with (
         patch.object(coordinator._client, "fetch_prices", AsyncMock(side_effect=CannotConnect("err"))),
@@ -46,31 +43,24 @@ async def test_coordinator_raises_update_failed_on_first_error(coordinator):
         await coordinator._async_update_data()
 
 
-@pytest.mark.asyncio
 async def test_coordinator_uses_stale_cache_on_subsequent_error(
     coordinator, sample_prices, sample_stations
 ):
-    # Prime the cache
     coordinator._prices_cache = sample_prices
     coordinator._stations_cache = sample_stations
     coordinator._prices_cached_at = 1.0
     coordinator._stations_cached_at = 1.0
 
-    with patch.object(
-        coordinator._client, "fetch_prices", AsyncMock(side_effect=CannotConnect("net"))
-    ):
-        # Should not raise; should use stale cache
+    with patch.object(coordinator._client, "fetch_prices", AsyncMock(side_effect=CannotConnect("net"))):
         result = await coordinator._async_update_data()
 
     assert result is not None
 
 
-@pytest.mark.asyncio
 async def test_coordinator_no_servito_mode(hass, sample_prices, sample_stations):
-    session = MagicMock()
     coord = FuelPricesCoordinator(
         hass=hass,
-        session=session,
+        session=MagicMock(),
         latitude=41.9,
         longitude=12.48,
         radius_km=10,
@@ -86,3 +76,18 @@ async def test_coordinator_no_servito_mode(hass, sample_prices, sample_stations)
 
     assert ("gasoline", False) not in result
     assert ("gasoline", True) in result
+
+
+async def test_coordinator_setup_via_config_entry(hass, mock_config_entry, sample_prices, sample_stations):
+    """Integration-level test: full setup through __init__.async_setup_entry."""
+    mock_config_entry.add_to_hass(hass)
+
+    with (
+        patch("custom_components.fuel_prices_italy.coordinator.MimitApiClient.fetch_prices", AsyncMock(return_value=sample_prices)),
+        patch("custom_components.fuel_prices_italy.coordinator.MimitApiClient.fetch_stations", AsyncMock(return_value=sample_stations)),
+    ):
+        await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+
+    from custom_components.fuel_prices_italy.const import DOMAIN
+    assert mock_config_entry.entry_id in hass.data[DOMAIN]

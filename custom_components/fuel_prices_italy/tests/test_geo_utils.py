@@ -34,7 +34,8 @@ def test_filter_stations_by_radius_includes_nearby(sample_stations):
 
 
 def test_filter_stations_by_radius_excludes_distant(sample_stations):
-    result = filter_stations_by_radius(sample_stations, 41.90, 12.48, radius_km=0.5)
+    # Use Milan as centre — both fixture stations are in Rome (~480 km away)
+    result = filter_stations_by_radius(sample_stations, 45.46, 9.19, radius_km=10)
     assert len(result) == 0
 
 
