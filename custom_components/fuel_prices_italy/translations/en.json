@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "location": {
+        "title": "Set your location",
+        "description": "Your Home Assistant home location is not configured. Enter an Italian address or city so we can find nearby fuel stations.",
+        "data": {
+          "address": "Address or city"
+        }
+      },
+      "user": {
+        "title": "Fuel Prices Italy",
+        "description": "Configure the search area and fuel types. Your HA home coordinates will be used as the centre point.",
+        "data": {
+          "radius_km": "Search radius (km)",
+          "fuel_types": "Fuel types to monitor"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to reach the MIMIT server. Check your internet connection.",
+      "invalid_data": "MIMIT returned empty or unrecognisable data.",
+      "geocode_failed": "Address not found. Try a more specific address or include the city name."
+    },
+    "abort": {
+      "already_configured": "Fuel Prices Italy is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "radius_km": "Search radius (km)",
+          "fuel_types": "Fuel types to monitor",
+          "update_interval_hours": "Update interval",
+          "show_servito": "Include full-service (servito) prices"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "gasoline_self_min":     { "name": "Gasoline self-service min" },
+      "gasoline_self_avg":     { "name": "Gasoline self-service avg" },
+      "gasoline_self_max":     { "name": "Gasoline self-service max" },
+      "gasoline_servito_min":  { "name": "Gasoline full service min" },
+      "gasoline_servito_avg":  { "name": "Gasoline full service avg" },
+      "gasoline_servito_max":  { "name": "Gasoline full service max" },
+
+      "diesel_self_min":       { "name": "Diesel self-service min" },
+      "diesel_self_avg":       { "name": "Diesel self-service avg" },
+      "diesel_self_max":       { "name": "Diesel self-service max" },
+      "diesel_servito_min":    { "name": "Diesel full service min" },
+      "diesel_servito_avg":    { "name": "Diesel full service avg" },
+      "diesel_servito_max":    { "name": "Diesel full service max" },
+
+      "lpg_self_min":          { "name": "LPG self-service min" },
+      "lpg_self_avg":          { "name": "LPG self-service avg" },
+      "lpg_self_max":          { "name": "LPG self-service max" },
+      "lpg_servito_min":       { "name": "LPG full service min" },
+      "lpg_servito_avg":       { "name": "LPG full service avg" },
+      "lpg_servito_max":       { "name": "LPG full service max" },
+
+      "methane_self_min":      { "name": "Methane self-service min" },
+      "methane_self_avg":      { "name": "Methane self-service avg" },
+      "methane_self_max":      { "name": "Methane self-service max" },
+      "methane_servito_min":   { "name": "Methane full service min" },
+      "methane_servito_avg":   { "name": "Methane full service avg" },
+      "methane_servito_max":   { "name": "Methane full service max" },
+
+      "hvo_self_min":          { "name": "HVO self-service min" },
+      "hvo_self_avg":          { "name": "HVO self-service avg" },
+      "hvo_self_max":          { "name": "HVO self-service max" },
+      "hvo_servito_min":       { "name": "HVO full service min" },
+      "hvo_servito_avg":       { "name": "HVO full service avg" },
+      "hvo_servito_max":       { "name": "HVO full service max" },
+
+      "blue_diesel_self_min":      { "name": "Blue Diesel self-service min" },
+      "blue_diesel_self_avg":      { "name": "Blue Diesel self-service avg" },
+      "blue_diesel_self_max":      { "name": "Blue Diesel self-service max" },
+      "blue_diesel_servito_min":   { "name": "Blue Diesel full service min" },
+      "blue_diesel_servito_avg":   { "name": "Blue Diesel full service avg" },
+      "blue_diesel_servito_max":   { "name": "Blue Diesel full service max" }
+    }
+  }
+}

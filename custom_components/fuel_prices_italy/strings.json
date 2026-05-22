@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "location": {
+        "title": "Set your location",
+        "description": "Your Home Assistant home location is not configured. Enter an Italian address or city so we can find nearby fuel stations.",
+        "data": {
+          "address": "Address or city"
+        }
+      },
+      "user": {
+        "title": "Fuel Prices Italy",
+        "description": "Configure the search area and fuel types. Your HA home coordinates will be used as the centre point.",
+        "data": {
+          "radius_km": "Search radius",
+          "fuel_types": "Fuel types to monitor"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to reach the MIMIT server. Check your internet connection.",
+      "invalid_data": "MIMIT returned empty or unrecognisable data.",
+      "geocode_failed": "Address not found. Try a more specific address or include the city name."
+    },
+    "abort": {
+      "already_configured": "Fuel Prices Italy is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "radius_km": "Search radius",
+          "fuel_types": "Fuel types to monitor",
+          "update_interval_hours": "Update interval",
+          "show_servito": "Include full-service (servito) prices"
+        }
+      }
+    }
+  }
+}

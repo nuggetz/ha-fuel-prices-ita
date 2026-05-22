@@ -1,0 +1,8 @@
+Estrazione del 2026-05-22
+idImpianto|Gestore|Bandiera|Tipo Impianto|Nome Impianto|Indirizzo|Comune|Provincia|Latitudine|Longitudine
+1001|ENI SPA|Agip Eni|Stradale|ENI ROMA CENTRO|Via Roma 1|Roma|RM|41.900000|12.480000
+1002|IP SPA|IP|Stradale|IP ROMA NORD|Via Milano 5|Roma|RM|41.920000|12.500000
+1003|ESSO|Esso|Stradale|ESSO ROMA SUD|Viale Trastevere 10|Roma|RM|41.880000|12.460000
+1004|SELF|No Brand|Stradale|DISTRIBUTORE SELF|Via Cassia 100|Roma|RM|41.910000|12.490000
+5000|BAD|Test|Stradale|ZERO COORDS|Via Nulla 0|Palermo|PA|0.000000|0.000000
+5001|OUT|Test|Stradale|OUT OF ITALY|Some Street|London|UK|51.500000|0.120000

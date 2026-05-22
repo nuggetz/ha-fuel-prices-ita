@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "location": {
+        "title": "Imposta la tua posizione",
+        "description": "La posizione di casa in Home Assistant non è configurata. Inserisci un indirizzo o una città italiana per trovare i distributori nelle vicinanze.",
+        "data": {
+          "address": "Indirizzo o città"
+        }
+      },
+      "user": {
+        "title": "Prezzi carburante Italia",
+        "description": "Configura il raggio di ricerca e i tipi di carburante. Le coordinate di casa in HA verranno usate come punto centrale.",
+        "data": {
+          "radius_km": "Raggio di ricerca (km)",
+          "fuel_types": "Tipi di carburante da monitorare"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile raggiungere il server MIMIT. Controlla la connessione internet.",
+      "invalid_data": "Il MIMIT ha restituito dati vuoti o non riconoscibili.",
+      "geocode_failed": "Indirizzo non trovato. Prova con un indirizzo più specifico o includi il nome della città."
+    },
+    "abort": {
+      "already_configured": "Prezzi carburante Italia è già configurato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "data": {
+          "radius_km": "Raggio di ricerca (km)",
+          "fuel_types": "Tipi di carburante da monitorare",
+          "update_interval_hours": "Intervallo di aggiornamento",
+          "show_servito": "Includi prezzi del servito"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "gasoline_self_min":     { "name": "Benzina self min" },
+      "gasoline_self_avg":     { "name": "Benzina self media" },
+      "gasoline_self_max":     { "name": "Benzina self max" },
+      "gasoline_servito_min":  { "name": "Benzina servito min" },
+      "gasoline_servito_avg":  { "name": "Benzina servito media" },
+      "gasoline_servito_max":  { "name": "Benzina servito max" },
+
+      "diesel_self_min":       { "name": "Gasolio self min" },
+      "diesel_self_avg":       { "name": "Gasolio self media" },
+      "diesel_self_max":       { "name": "Gasolio self max" },
+      "diesel_servito_min":    { "name": "Gasolio servito min" },
+      "diesel_servito_avg":    { "name": "Gasolio servito media" },
+      "diesel_servito_max":    { "name": "Gasolio servito max" },
+
+      "lpg_self_min":          { "name": "GPL self min" },
+      "lpg_self_avg":          { "name": "GPL self media" },
+      "lpg_self_max":          { "name": "GPL self max" },
+      "lpg_servito_min":       { "name": "GPL servito min" },
+      "lpg_servito_avg":       { "name": "GPL servito media" },
+      "lpg_servito_max":       { "name": "GPL servito max" },
+
+      "methane_self_min":      { "name": "Metano self min" },
+      "methane_self_avg":      { "name": "Metano self media" },
+      "methane_self_max":      { "name": "Metano self max" },
+      "methane_servito_min":   { "name": "Metano servito min" },
+      "methane_servito_avg":   { "name": "Metano servito media" },
+      "methane_servito_max":   { "name": "Metano servito max" },
+
+      "hvo_self_min":          { "name": "HVO self min" },
+      "hvo_self_avg":          { "name": "HVO self media" },
+      "hvo_self_max":          { "name": "HVO self max" },
+      "hvo_servito_min":       { "name": "HVO servito min" },
+      "hvo_servito_avg":       { "name": "HVO servito media" },
+      "hvo_servito_max":       { "name": "HVO servito max" },
+
+      "blue_diesel_self_min":      { "name": "Blue Diesel self min" },
+      "blue_diesel_self_avg":      { "name": "Blue Diesel self media" },
+      "blue_diesel_self_max":      { "name": "Blue Diesel self max" },
+      "blue_diesel_servito_min":   { "name": "Blue Diesel servito min" },
+      "blue_diesel_servito_avg":   { "name": "Blue Diesel servito media" },
+      "blue_diesel_servito_max":   { "name": "Blue Diesel servito max" }
+    }
+  }
+}
